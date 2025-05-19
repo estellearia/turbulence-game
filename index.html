@@ -33,7 +33,7 @@
     display: block;
   }
   #instructions {
-    font-size: 9px;
+    font-size: 8px;
     margin-top: 10px;
     margin-bottom: 12px;
     text-align: center;
@@ -69,7 +69,10 @@
   let blocks = [];
   let keys = {};
   let running = false;
-  let gameLoop;
+  let elapsedTime = 0;
+  let difficultyLevel = 0;  // 0 easy, 1 medium, 2 hard, 3 impossible
+  let blockSpeed = 2;
+  let spawnRate = 0.02; // base spawn rate
 
   function drawPixelRect(x, y, w, h, color) {
     ctx.fillStyle = color;
@@ -82,11 +85,11 @@
     blocks.forEach(b => drawPixelRect(b.x, b.y, b.w, b.h, "red"));
   }
 
-  function update() {
-    if (keys["ArrowLeft"] && player.x > 0) player.x -= 3;
-    if (keys["ArrowRight"] && player.x + player.w < canvas.width) player.x += 3;
+  function update(deltaTime) {
+    if (keys["ArrowLeft"] && player.x > 0) player.x -= 4;
+    if (keys["ArrowRight"] && player.x + player.w < canvas.width) player.x += 4;
 
-    blocks.forEach(b => b.y += 3);
+    blocks.forEach(b => b.y += blockSpeed);
 
     // Collision detection
     if (blocks.some(b =>
@@ -99,36 +102,79 @@
     }
 
     blocks = blocks.filter(b => b.y < canvas.height);
-    if (Math.random() < 0.03) {
-      blocks.push({ x: Math.floor(Math.random() * (canvas.width - 20)), y: -20, w: 20, h: 20 });
+
+    // Spawn blocks according to difficulty
+    if (difficultyLevel < 3) {
+      // Random blocks spawning
+      if (Math.random() < spawnRate) {
+        blocks.push({ x: Math.floor(Math.random() * (canvas.width - 20)), y: -20, w: 20, h: 20 });
+      }
+    } else {
+      // Impossible phase: full-width blocks dropping at intervals
+      if (!blocks.length || blocks[blocks.length - 1].y > 40) {
+        blocks.push({ x: 0, y: -20, w: canvas.width, h: 20 });
+      }
     }
   }
 
-  function gameTick() {
-    update();
+  let lastTime = null;
+  function gameTick(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+    const deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
+
+    elapsedTime += deltaTime;
+
+    // Increase difficulty every 5 seconds
+    if (elapsedTime > 15000) {
+      difficultyLevel = 3;  // Impossible
+      title.textContent = "🌊 IMPOSSIBLE TURBULENCE...";
+      spawnRate = 0; // no random spawning
+      blockSpeed = 5;
+    } else if (elapsedTime > 10000) {
+      difficultyLevel = 2;  // Hard
+      title.textContent = "🌊 Turbulence intensifies...";
+      spawnRate = 0.1;
+      blockSpeed = 4;
+    } else if (elapsedTime > 5000) {
+      difficultyLevel = 1;  // Medium
+      title.textContent = "🌊 Turbulence rising...";
+      spawnRate = 0.06;
+      blockSpeed = 3;
+    }
+
+    update(deltaTime);
     draw();
+
+    if (running) {
+      requestAnimationFrame(gameTick);
+    }
   }
 
   function startGame() {
     player.x = 110;
     blocks = [];
+    elapsedTime = 0;
+    difficultyLevel = 0;
+    spawnRate = 0.02;
+    blockSpeed = 2;
     title.textContent = "🌊 TURBULENCE...";
     instructions.style.display = "block";
     startButton.style.display = "none";
     running = true;
-    gameLoop = setInterval(gameTick, 1000 / 60);
+    lastTime = null;
+    requestAnimationFrame(gameTick);
   }
 
   function endGame() {
-    clearInterval(gameLoop);
     running = false;
     title.innerHTML = "☁️ You got hit...<br>But you made it through.";
     instructions.style.display = "none";
-    startButton.textContent = "NEXT";
-    startButton.style.display = "inline-block";
-    startButton.onclick = () => {
+    startButton.style.display = "none";
+
+    setTimeout(() => {
       window.top.location.href = "https://frdffsdx.carrd.co/#turbulencecomplete";
-    };
+    }, 2000);
   }
 
   window.addEventListener("keydown", e => keys[e.key] = true);
