@@ -2,176 +2,149 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Turbulence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Turbulence - Reaction Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
     body {
       margin: 0;
-      background-color: black;
+      background: black;
       color: white;
-      font-family: 'Press Start 2P', cursive;
+      font-family: 'Press Start 2P', monospace;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
       overflow: hidden;
+      padding: 10px;
     }
 
-    #gameCanvas {
-      border: 4px solid white;
-      background-color: #111;
-      display: none;
-    }
-
-    #startButton, #instructionText {
-      margin: 10px;
+    #ui {
       text-align: center;
+      margin-bottom: 8px;
+      max-width: 300px;
+    }
+
+    #message {
+      font-size: 10px;
+      line-height: 1.2em;
+      margin-bottom: 6px;
+    }
+
+    #instructions {
+      font-size: 8px;
+      margin-bottom: 10px;
+      color: #aaa;
+      user-select: none;
     }
 
     #startButton {
-      padding: 10px 20px;
-      background-color: white;
-      color: black;
-      border: none;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      background: #222;
+      color: white;
+      border: 2px solid white;
+      padding: 6px 14px;
       cursor: pointer;
-      font-family: 'Press Start 2P', cursive;
+      letter-spacing: 0.03em;
     }
 
-    #messageBox {
-      width: 90%;
-      max-width: 400px;
-      margin: 20px auto;
-      text-align: left;
-      white-space: pre-wrap;
+    canvas {
+      border: 2px solid white;
+      background: #111;
+      image-rendering: pixelated;
+      width: 240px;
+      height: 320px;
+      display: block;
+      margin: 0 auto;
     }
   </style>
 </head>
 <body>
-  <div id="instructionText">
-    * Turbulence ahead...<br>
-    * Use ← and → keys or tap to dodge chaos.<br>
-    * Survive to reach Aria.
+  <div id="ui">
+    <div id="message">🌊 TURBULENCE...</div>
+    <div id="instructions">Use ◀️ and ▶️ arrow keys<br>to dodge falling red blocks</div>
+    <button id="startButton">START</button>
   </div>
-  <button id="startButton">START</button>
-  <canvas id="gameCanvas" width="400" height="300"></canvas>
-  <div id="messageBox"></div>
+  <canvas id="gameCanvas" width="240" height="320"></canvas>
 
   <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
     const startButton = document.getElementById("startButton");
-    const gameCanvas = document.getElementById("gameCanvas");
-    const ctx = gameCanvas.getContext("2d");
-    const instructionText = document.getElementById("instructionText");
-    const messageBox = document.getElementById("messageBox");
+    const message = document.getElementById("message");
+    const instructions = document.getElementById("instructions");
 
-    let player = { x: 180, y: 250, size: 20 };
-    let obstacles = [];
+    let player = { x: 110, y: 280, w: 20, h: 20 };
+    let blocks = [];
     let keys = {};
-    let playing = false;
-    let interval;
+    let running = false;
+    let gameLoop;
 
-    document.addEventListener('keydown', (e) => keys[e.key] = true);
-    document.addEventListener('keyup', (e) => keys[e.key] = false);
-
-    gameCanvas.addEventListener('click', () => {
-      player.x += 30;
-      if (player.x > 380) player.x = 380;
-    });
-
-    function drawPlayer() {
-      ctx.fillStyle = "#FFF";
-      ctx.fillRect(player.x, player.y, player.size, player.size);
-    }
-
-    function drawObstacle(obs) {
-      ctx.fillStyle = "#F00";
-      ctx.fillRect(obs.x, obs.y, obs.size, obs.size);
-    }
-
-    function updatePlayer() {
-      if (keys["ArrowLeft"]) player.x -= 5;
-      if (keys["ArrowRight"]) player.x += 5;
-      player.x = Math.max(0, Math.min(player.x, 400 - player.size));
-    }
-
-    function spawnObstacle() {
-      const size = 20;
-      const x = Math.floor(Math.random() * (400 - size));
-      obstacles.push({ x, y: 0, size });
-    }
-
-    function updateObstacles() {
-      for (let obs of obstacles) {
-        obs.y += 4;
-      }
-      obstacles = obstacles.filter(obs => obs.y < 300);
-    }
-
-    function checkCollision() {
-      for (let obs of obstacles) {
-        if (
-          obs.x < player.x + player.size &&
-          obs.x + obs.size > player.x &&
-          obs.y < player.y + player.size &&
-          obs.y + obs.size > player.y
-        ) {
-          endGame(false);
-        }
-      }
+    function drawPixelRect(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
     }
 
     function draw() {
-      ctx.clearRect(0, 0, 400, 300);
-      drawPlayer();
-      for (let obs of obstacles) drawObstacle(obs);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPixelRect(player.x, player.y, player.w, player.h, "white");
+      blocks.forEach(b => drawPixelRect(b.x, b.y, b.w, b.h, "red"));
     }
 
-    function gameLoop() {
-      if (!playing) return;
-      updatePlayer();
-      updateObstacles();
-      checkCollision();
+    function update() {
+      if (keys["ArrowLeft"] && player.x > 0) player.x -= 3;
+      if (keys["ArrowRight"] && player.x + player.w < canvas.width) player.x += 3;
+
+      blocks.forEach(b => b.y += 3);
+
+      // Collision detection
+      if (blocks.some(b => 
+        b.y + b.h > player.y &&
+        b.x < player.x + player.w &&
+        b.x + b.w > player.x &&
+        b.y < player.y + player.h
+      )) {
+        endGame();
+      }
+
+      blocks = blocks.filter(b => b.y < canvas.height);
+      if (Math.random() < 0.03) {
+        blocks.push({ x: Math.floor(Math.random() * (canvas.width - 20)), y: -20, w: 20, h: 20 });
+      }
+    }
+
+    function gameTick() {
+      update();
       draw();
     }
 
     function startGame() {
-      player.x = 180;
-      obstacles = [];
-      playing = true;
-      instructionText.style.display = "none";
+      player.x = 110;
+      blocks = [];
+      message.textContent = "🌊 TURBULENCE...";
+      instructions.style.display = "block";
       startButton.style.display = "none";
-      gameCanvas.style.display = "block";
-      messageBox.textContent = "";
-      interval = setInterval(gameLoop, 30);
-      obstacleInterval = setInterval(spawnObstacle, 600);
-
-      // End the game successfully after 15 seconds
-      setTimeout(() => {
-        if (playing) endGame(true);
-      }, 15000);
+      running = true;
+      gameLoop = setInterval(gameTick, 1000 / 60);
     }
 
-    function endGame(won) {
-      playing = false;
-      clearInterval(interval);
-      clearInterval(obstacleInterval);
-      gameCanvas.style.display = "none";
-
-      if (won) {
-        messageBox.textContent = "* You braved the storm...\n* The chaos fades...\n* You're one step closer.";
-        setTimeout(() => {
-          window.top.location.href = "https://frdffsdx.carrd.co/#turbulenceclear";
-        }, 4000);
-      } else {
-        messageBox.textContent = "* Overwhelmed by chaos...\n* Try again.";
-        startButton.style.display = "block";
-        instructionText.style.display = "block";
-      }
+    function endGame() {
+      clearInterval(gameLoop);
+      running = false;
+      message.innerHTML = "☁️ You got hit...<br>But you made it through.";
+      instructions.style.display = "none";
+      startButton.textContent = "NEXT";
+      startButton.style.display = "inline-block";
+      startButton.onclick = () => {
+        window.top.location.href = "https://frdffsdx.carrd.co/#turbulencecomplete";
+      };
     }
 
-    startButton.addEventListener("click", startGame);
+    window.addEventListener("keydown", e => keys[e.key] = true);
+    window.addEventListener("keyup", e => keys[e.key] = false);
+    startButton.onclick = startGame;
   </script>
 </body>
 </html>
