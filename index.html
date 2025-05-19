@@ -1,96 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Turbulence - Reaction Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Turbulence</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
     body {
+      margin: 0;
       background-color: black;
       color: white;
-      font-family: 'Press Start 2P', monospace;
-      text-align: center;
-      padding: 50px;
+      font-family: 'Press Start 2P', cursive;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
     }
-    #gameBox {
+
+    #gameCanvas {
       border: 4px solid white;
-      padding: 30px;
-      max-width: 500px;
-      margin: 0 auto;
+      background-color: #111;
+      display: none;
     }
-    #signal {
-      font-size: 18px;
-      margin-top: 40px;
+
+    #startButton, #instructionText {
+      margin: 10px;
+      text-align: center;
     }
-    #startBtn {
-      margin-top: 20px;
+
+    #startButton {
       padding: 10px 20px;
-      background: white;
+      background-color: white;
       color: black;
-      font-weight: bold;
+      border: none;
       cursor: pointer;
+      font-family: 'Press Start 2P', cursive;
     }
-    #result {
-      margin-top: 30px;
-      font-size: 16px;
+
+    #messageBox {
+      width: 90%;
+      max-width: 400px;
+      margin: 20px auto;
+      text-align: left;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <div id="gameBox">
-    <h2>🌊 Turbulence</h2>
-    <p>Wait for the signal... Then react fast!</p>
-    <div id="signal">---</div>
-    <button id="startBtn">Start</button>
-    <div id="result"></div>
+  <div id="instructionText">
+    * Turbulence ahead...<br>
+    * Use ← and → keys or tap to dodge chaos.<br>
+    * Survive to reach Aria.
   </div>
+  <button id="startButton">START</button>
+  <canvas id="gameCanvas" width="400" height="300"></canvas>
+  <div id="messageBox"></div>
 
   <script>
-    const signal = document.getElementById("signal");
-    const result = document.getElementById("result");
-    const startBtn = document.getElementById("startBtn");
+    const startButton = document.getElementById("startButton");
+    const gameCanvas = document.getElementById("gameCanvas");
+    const ctx = gameCanvas.getContext("2d");
+    const instructionText = document.getElementById("instructionText");
+    const messageBox = document.getElementById("messageBox");
 
-    let gameActive = false;
-    let timeoutId;
-    let startTime;
+    let player = { x: 180, y: 250, size: 20 };
+    let obstacles = [];
+    let keys = {};
+    let playing = false;
+    let interval;
 
-    startBtn.onclick = () => {
-      result.textContent = "";
-      signal.textContent = "Get ready...";
-      startBtn.disabled = true;
+    document.addEventListener('keydown', (e) => keys[e.key] = true);
+    document.addEventListener('keyup', (e) => keys[e.key] = false);
 
-      const delay = Math.random() * 3000 + 2000;
+    gameCanvas.addEventListener('click', () => {
+      player.x += 30;
+      if (player.x > 380) player.x = 380;
+    });
 
-      timeoutId = setTimeout(() => {
-        signal.textContent = "NOW!";
-        gameActive = true;
-        startTime = performance.now();
-      }, delay);
-    };
-
-    document.body.addEventListener("keydown", handleReaction);
-    document.body.addEventListener("click", handleReaction);
-
-    function handleReaction() {
-      if (!startBtn.disabled) return;
-
-      if (!gameActive) {
-        clearTimeout(timeoutId);
-        signal.textContent = "Too soon!";
-        result.textContent = "You panicked under pressure.";
-        startBtn.disabled = false;
-        return;
-      }
-
-      const reactionTime = performance.now() - startTime;
-      signal.textContent = "✔";
-      result.textContent = `You held on through the storm.\nReaction time: ${reactionTime.toFixed(0)} ms`;
-
-      gameActive = false;
-      setTimeout(() => {
-        // Continue to next stage (e.g., redirect)
-        window.top.location.href = "https://frdffsdx.carrd.co/#turbulence-cleared";
-      }, 2000);
+    function drawPlayer() {
+      ctx.fillStyle = "#FFF";
+      ctx.fillRect(player.x, player.y, player.size, player.size);
     }
+
+    function drawObstacle(obs) {
+      ctx.fillStyle = "#F00";
+      ctx.fillRect(obs.x, obs.y, obs.size, obs.size);
+    }
+
+    function updatePlayer() {
+      if (keys["ArrowLeft"]) player.x -= 5;
+      if (keys["ArrowRight"]) player.x += 5;
+      player.x = Math.max(0, Math.min(player.x, 400 - player.size));
+    }
+
+    function spawnObstacle() {
+      const size = 20;
+      const x = Math.floor(Math.random() * (400 - size));
+      obstacles.push({ x, y: 0, size });
+    }
+
+    function updateObstacles() {
+      for (let obs of obstacles) {
+        obs.y += 4;
+      }
+      obstacles = obstacles.filter(obs => obs.y < 300);
+    }
+
+    function checkCollision() {
+      for (let obs of obstacles) {
+        if (
+          obs.x < player.x + player.size &&
+          obs.x + obs.size > player.x &&
+          obs.y < player.y + player.size &&
+          obs.y + obs.size > player.y
+        ) {
+          endGame(false);
+        }
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, 400, 300);
+      drawPlayer();
+      for (let obs of obstacles) drawObstacle(obs);
+    }
+
+    function gameLoop() {
+      if (!playing) return;
+      updatePlayer();
+      updateObstacles();
+      checkCollision();
+      draw();
+    }
+
+    function startGame() {
+      player.x = 180;
+      obstacles = [];
+      playing = true;
+      instructionText.style.display = "none";
+      startButton.style.display = "none";
+      gameCanvas.style.display = "block";
+      messageBox.textContent = "";
+      interval = setInterval(gameLoop, 30);
+      obstacleInterval = setInterval(spawnObstacle, 600);
+
+      // End the game successfully after 15 seconds
+      setTimeout(() => {
+        if (playing) endGame(true);
+      }, 15000);
+    }
+
+    function endGame(won) {
+      playing = false;
+      clearInterval(interval);
+      clearInterval(obstacleInterval);
+      gameCanvas.style.display = "none";
+
+      if (won) {
+        messageBox.textContent = "* You braved the storm...\n* The chaos fades...\n* You're one step closer.";
+        setTimeout(() => {
+          window.top.location.href = "https://frdffsdx.carrd.co/#turbulenceclear";
+        }, 4000);
+      } else {
+        messageBox.textContent = "* Overwhelmed by chaos...\n* Try again.";
+        startButton.style.display = "block";
+        instructionText.style.display = "block";
+      }
+    }
+
+    startButton.addEventListener("click", startGame);
   </script>
 </body>
 </html>
