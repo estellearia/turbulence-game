@@ -1,150 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Turbulence - Reaction Game</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      color: white;
-      font-family: 'Press Start 2P', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
-      padding: 10px;
-    }
-
-    #ui {
-      text-align: center;
-      margin-bottom: 8px;
-      max-width: 300px;
-    }
-
-    #message {
-      font-size: 10px;
-      line-height: 1.2em;
-      margin-bottom: 6px;
-    }
-
-    #instructions {
-      font-size: 8px;
-      margin-bottom: 10px;
-      color: #aaa;
-      user-select: none;
-    }
-
-    #startButton {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 10px;
-      background: #222;
-      color: white;
-      border: 2px solid white;
-      padding: 6px 14px;
-      cursor: pointer;
-      letter-spacing: 0.03em;
-    }
-
-    canvas {
-      border: 2px solid white;
-      background: #111;
-      image-rendering: pixelated;
-      width: 240px;
-      height: 320px;
-      display: block;
-      margin: 0 auto;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Turbulence - Reaction Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    background: black;
+    color: white;
+    font-family: 'Press Start 2P', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 10px;
+    user-select: none;
+  }
+  #title {
+    font-size: 12px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  canvas {
+    border: 2px solid white;
+    background: #111;
+    image-rendering: pixelated;
+    width: 240px;
+    height: 320px;
+    display: block;
+  }
+  #instructions {
+    font-size: 8px;
+    margin-top: 10px;
+    margin-bottom: 12px;
+    text-align: center;
+    color: #aaa;
+  }
+  #startButton {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    background: #222;
+    color: white;
+    border: 2px solid white;
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    user-select: none;
+  }
+</style>
 </head>
 <body>
-  <div id="ui">
-    <div id="message">🌊 TURBULENCE...</div>
-    <div id="instructions">Use ◀️ and ▶️ arrow keys<br>to dodge falling red blocks</div>
-    <button id="startButton">START</button>
-  </div>
+  <div id="title">🌊 TURBULENCE...</div>
   <canvas id="gameCanvas" width="240" height="320"></canvas>
+  <div id="instructions">Use ◀️ and ▶️ arrow keys<br>to dodge falling red blocks</div>
+  <button id="startButton">START</button>
 
-  <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    const startButton = document.getElementById("startButton");
-    const message = document.getElementById("message");
-    const instructions = document.getElementById("instructions");
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+  const startButton = document.getElementById("startButton");
+  const title = document.getElementById("title");
+  const instructions = document.getElementById("instructions");
 
-    let player = { x: 110, y: 280, w: 20, h: 20 };
-    let blocks = [];
-    let keys = {};
-    let running = false;
-    let gameLoop;
+  let player = { x: 110, y: 280, w: 20, h: 20 };
+  let blocks = [];
+  let keys = {};
+  let running = false;
+  let gameLoop;
 
-    function drawPixelRect(x, y, w, h, color) {
-      ctx.fillStyle = color;
-      ctx.fillRect(x, y, w, h);
+  function drawPixelRect(x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, w, h);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPixelRect(player.x, player.y, player.w, player.h, "white");
+    blocks.forEach(b => drawPixelRect(b.x, b.y, b.w, b.h, "red"));
+  }
+
+  function update() {
+    if (keys["ArrowLeft"] && player.x > 0) player.x -= 3;
+    if (keys["ArrowRight"] && player.x + player.w < canvas.width) player.x += 3;
+
+    blocks.forEach(b => b.y += 3);
+
+    // Collision detection
+    if (blocks.some(b =>
+      b.y + b.h > player.y &&
+      b.x < player.x + player.w &&
+      b.x + b.w > player.x &&
+      b.y < player.y + player.h
+    )) {
+      endGame();
     }
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawPixelRect(player.x, player.y, player.w, player.h, "white");
-      blocks.forEach(b => drawPixelRect(b.x, b.y, b.w, b.h, "red"));
+    blocks = blocks.filter(b => b.y < canvas.height);
+    if (Math.random() < 0.03) {
+      blocks.push({ x: Math.floor(Math.random() * (canvas.width - 20)), y: -20, w: 20, h: 20 });
     }
+  }
 
-    function update() {
-      if (keys["ArrowLeft"] && player.x > 0) player.x -= 3;
-      if (keys["ArrowRight"] && player.x + player.w < canvas.width) player.x += 3;
+  function gameTick() {
+    update();
+    draw();
+  }
 
-      blocks.forEach(b => b.y += 3);
+  function startGame() {
+    player.x = 110;
+    blocks = [];
+    title.textContent = "🌊 TURBULENCE...";
+    instructions.style.display = "block";
+    startButton.style.display = "none";
+    running = true;
+    gameLoop = setInterval(gameTick, 1000 / 60);
+  }
 
-      // Collision detection
-      if (blocks.some(b => 
-        b.y + b.h > player.y &&
-        b.x < player.x + player.w &&
-        b.x + b.w > player.x &&
-        b.y < player.y + player.h
-      )) {
-        endGame();
-      }
+  function endGame() {
+    clearInterval(gameLoop);
+    running = false;
+    title.innerHTML = "☁️ You got hit...<br>But you made it through.";
+    instructions.style.display = "none";
+    startButton.textContent = "NEXT";
+    startButton.style.display = "inline-block";
+    startButton.onclick = () => {
+      window.top.location.href = "https://frdffsdx.carrd.co/#turbulencecomplete";
+    };
+  }
 
-      blocks = blocks.filter(b => b.y < canvas.height);
-      if (Math.random() < 0.03) {
-        blocks.push({ x: Math.floor(Math.random() * (canvas.width - 20)), y: -20, w: 20, h: 20 });
-      }
-    }
-
-    function gameTick() {
-      update();
-      draw();
-    }
-
-    function startGame() {
-      player.x = 110;
-      blocks = [];
-      message.textContent = "🌊 TURBULENCE...";
-      instructions.style.display = "block";
-      startButton.style.display = "none";
-      running = true;
-      gameLoop = setInterval(gameTick, 1000 / 60);
-    }
-
-    function endGame() {
-      clearInterval(gameLoop);
-      running = false;
-      message.innerHTML = "☁️ You got hit...<br>But you made it through.";
-      instructions.style.display = "none";
-      startButton.textContent = "NEXT";
-      startButton.style.display = "inline-block";
-      startButton.onclick = () => {
-        window.top.location.href = "https://frdffsdx.carrd.co/#turbulencecomplete";
-      };
-    }
-
-    window.addEventListener("keydown", e => keys[e.key] = true);
-    window.addEventListener("keyup", e => keys[e.key] = false);
-    startButton.onclick = startGame;
-  </script>
+  window.addEventListener("keydown", e => keys[e.key] = true);
+  window.addEventListener("keyup", e => keys[e.key] = false);
+  startButton.onclick = startGame;
+</script>
 </body>
 </html>
