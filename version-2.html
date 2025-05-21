@@ -8,8 +8,8 @@
 <style>
   body {
     margin: 0;
-    background: radial-gradient(ellipse at 60% 90%, #232742 0%, #0e1124 90%);
-    color: #fffbe3;
+    background: #101014;
+    color: #fff;
     font-family: 'Press Start 2P', monospace;
     display: flex;
     flex-direction: column;
@@ -21,87 +21,86 @@
     overflow: hidden;
   }
   #title {
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 18px;
+    margin-bottom: 18px;
     text-align: center;
-    letter-spacing: 2px;
-    color: #ffe764;
-    text-shadow: 0 2px 20px #ffe76455, 0 1px 0 #353a5c, 0 0 8px #ffe764b5;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow: 0 2px 8px #fff3, 0 1px 0 #222, 0 0 8px #fff1;
     transition: color 0.4s;
   }
   canvas {
-    border: 4px solid #ffe764;
-    background: linear-gradient(180deg, #181a2b 70%, #232742 100%);
+    border: 2px solid #fff;
+    background: #111;
     image-rendering: pixelated;
-    width: 420px;
-    height: 560px;
-    max-width: 96vw;
-    max-height: 78vh;
+    width: 260px;
+    height: 360px;
+    max-width: 98vw;
+    max-height: 75vh;
     display: block;
-    box-shadow: 0 0 18px #ffe76455, 0 0 60px #23274288;
-    border-radius: 18px;
-    margin-bottom: 14px;
-    margin-top: 2px;
-    transition: border-color 0.3s;
+    box-shadow: 0 0 8px #fff3, 0 0 20px #000a;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    margin-top: 1px;
   }
   #instructions {
-    font-size: 14px;
-    margin-top: 10px;
-    margin-bottom: 14px;
+    font-size: 11px;
+    margin-top: 7px;
+    margin-bottom: 12px;
     text-align: center;
-    color: #ffe764;
-    background: rgba(20, 20, 40, 0.5);
-    border-radius: 9px;
-    padding: 8px 10px 7px 10px;
-    border: 1.5px solid #ffe76455;
+    color: #ccc;
+    background: rgba(15,15,25,0.5);
+    border-radius: 7px;
+    padding: 6px 11px 6px 11px;
+    border: 1.5px solid #fff1;
     display: inline-block;
-    box-shadow: 0 0 6px #ffe7641c;
+    box-shadow: 0 0 4px #fff2;
     letter-spacing: 0.01em;
   }
   #startButton {
     font-family: 'Press Start 2P', monospace;
-    font-size: 16px;
-    background: #232742;
-    color: #ffe764;
-    border: 3px solid #ffe764;
-    border-radius: 9px;
-    padding: 14px 32px;
+    font-size: 12px;
+    background: #111;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    padding: 10px 22px;
     cursor: pointer;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.04em;
     user-select: none;
-    margin-top: 10px;
+    margin-top: 9px;
     margin-bottom: 2px;
-    box-shadow: 0 2px 0 0 #353a5c, 0 0 12px #ffe76470 inset;
-    transition: background 0.16s, color 0.13s, border-color 0.13s, transform 0.07s;
+    box-shadow: 0 2px 0 0 #333, 0 0 6px #fff2 inset;
+    transition: background 0.15s, color 0.12s, border-color 0.12s, transform 0.07s;
   }
   #startButton:hover {
-    background: #ffe764;
-    color: #232742;
-    border-color: #fffbe3;
-    transform: scale(1.04) translateY(-1px);
-    box-shadow: 0 0 20px #ffe764ad, 0 3px 0 0 #353a5c;
+    background: #fff;
+    color: #111;
+    border-color: #eee;
+    transform: scale(1.03) translateY(-1px);
+    box-shadow: 0 0 10px #fff5, 0 3px 0 0 #222;
   }
   .scoreDisplay {
-    font-size: 13px;
-    color: #fffbe3;
+    font-size: 12px;
+    color: #fff;
     margin-bottom: 6px;
     text-align: center;
-    letter-spacing: 0.06em;
-    text-shadow: 0 1px 0 #353a5c, 0 0 7px #ffe7641c;
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 0 #222, 0 0 4px #fff2;
   }
   @media (max-width: 600px) {
-    #title { font-size: 16px; }
-    #instructions { font-size: 10px; padding: 6px 5px; }
-    #startButton { font-size: 10px; padding: 9px 17px; }
-    canvas { width: 96vw; height: 60vw; min-height: 240px; min-width: 160px; }
+    #title { font-size: 13px; }
+    #instructions { font-size: 9px; padding: 5px 5px; }
+    #startButton { font-size: 10px; padding: 7px 10px; }
+    canvas { width: 98vw; height: 50vw; min-height: 180px; min-width: 120px; }
   }
 </style>
 </head>
 <body>
-  <div id="title">🌊 TURBULENCE...</div>
+  <div id="title">TURBULENCE...</div>
   <div class="scoreDisplay" id="scoreDisplay" style="display:none;"></div>
-  <canvas id="gameCanvas" width="420" height="560"></canvas>
-  <div id="instructions">Use ◀️ and ▶️ arrow keys<br>to dodge falling red blocks</div>
+  <canvas id="gameCanvas" width="260" height="360"></canvas>
+  <div id="instructions">Use ◀️ and ▶️ arrow keys<br>to dodge falling blocks</div>
   <button id="startButton">START</button>
 
 <script>
@@ -114,27 +113,29 @@
 
   const CANVAS_WIDTH = canvas.width;
   const CANVAS_HEIGHT = canvas.height;
-  const PLAYER_SIZE = 36;
-  const BLOCK_SIZE = 36;
-  const PLAYER_COLOR = "#fffbe3";
-  const BLOCK_COLOR = "#ff355b";
-  const SHADOW_COLOR = "#ffe76499";
+  const PLAYER_SIZE = 22;
+  const BLOCK_SIZE = 22;
+  const PLAYER_COLOR = "#fff";
+  const BLOCK_COLOR = "#fff";
+  const SHADOW_COLOR = "#fff7";
+  const HIT_COLOR = "#fff";
 
-  let player = { x: Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2), y: CANVAS_HEIGHT - PLAYER_SIZE - 18, w: PLAYER_SIZE, h: PLAYER_SIZE };
+  let player = { x: Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2), y: CANVAS_HEIGHT - PLAYER_SIZE - 14, w: PLAYER_SIZE, h: PLAYER_SIZE };
   let blocks = [];
   let keys = {};
   let running = false;
   let elapsedTime = 0;
   let difficultyLevel = 0;
-  let blockSpeed = 3;
+  let blockSpeed = 2;
   let spawnRate = 0.012;
   let score = 0;
   let impossibleStarted = false;
+  let hitFlash = 0;
 
   function drawPixelRect(x, y, w, h, color) {
     ctx.save();
     ctx.shadowColor = SHADOW_COLOR;
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = 5;
     ctx.fillStyle = color;
     ctx.fillRect(x, y, w, h);
     ctx.restore();
@@ -144,7 +145,7 @@
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     // Draw player
-    drawPixelRect(player.x, player.y, player.w, player.h, PLAYER_COLOR);
+    drawPixelRect(player.x, player.y, player.w, player.h, hitFlash > 0 ? HIT_COLOR : PLAYER_COLOR);
 
     // Draw blocks
     blocks.forEach(b => drawPixelRect(b.x, b.y, b.w, b.h, BLOCK_COLOR));
@@ -152,8 +153,8 @@
 
   function update(deltaTime) {
     // Player movement
-    if (keys["ArrowLeft"] && player.x > 0) player.x -= 7;
-    if (keys["ArrowRight"] && player.x + player.w < CANVAS_WIDTH) player.x += 7;
+    if (keys["ArrowLeft"] && player.x > 0) player.x -= 5;
+    if (keys["ArrowRight"] && player.x + player.w < CANVAS_WIDTH) player.x += 5;
 
     // Clamp player inside canvas
     player.x = Math.max(0, Math.min(player.x, CANVAS_WIDTH - player.w));
@@ -168,6 +169,7 @@
       b.x + b.w > player.x &&
       b.y < player.y + player.h
     )) {
+      hitFlash = 6;
       endGame();
       return;
     }
@@ -187,14 +189,13 @@
       }
     } else {
       // Impossible: fill the whole screen with a wall the player can't dodge
-      // This guarantees the player will always lose in this phase
       if (!impossibleStarted) {
         impossibleStarted = true;
         // Spawn a first wall immediately
         blocks.push({ x: 0, y: -BLOCK_SIZE, w: CANVAS_WIDTH, h: BLOCK_SIZE });
       }
-      // Drop a new wall every ~0.5 second, fast enough that the player cannot escape
-      if (blocks.length === 0 || blocks[blocks.length - 1].y > BLOCK_SIZE * 0.7) {
+      // Drop a new wall every ~0.45 seconds, fast enough that the player cannot escape
+      if (blocks.length === 0 || blocks[blocks.length - 1].y > BLOCK_SIZE * 0.75) {
         blocks.push({ x: 0, y: -BLOCK_SIZE, w: CANVAS_WIDTH, h: BLOCK_SIZE });
       }
     }
@@ -209,26 +210,33 @@
     elapsedTime += deltaTime;
     score = Math.floor(elapsedTime / 100);
 
-    // Difficulty scaling
+    // Smoother progressive difficulty
     if (elapsedTime > 13000) {
       difficultyLevel = 3;
-      title.textContent = "🌊 IMPOSSIBLE TURBULENCE...";
+      title.textContent = "IMPOSSIBLE TURBULENCE...";
       spawnRate = 0;
-      blockSpeed = 8.5;
-    } else if (elapsedTime > 9000) {
+      blockSpeed = 7.5;
+    } else if (elapsedTime > 10000) {
       difficultyLevel = 2;
-      title.textContent = "🌊 Turbulence intensifies...";
-      spawnRate = 0.07;
+      title.textContent = "Turbulence intensifies...";
+      spawnRate = 0.06;
       blockSpeed = 5.4;
-    } else if (elapsedTime > 5000) {
+    } else if (elapsedTime > 6000) {
       difficultyLevel = 1;
-      title.textContent = "🌊 Turbulence rising...";
-      spawnRate = 0.035;
-      blockSpeed = 4.2;
+      title.textContent = "Turbulence rising...";
+      spawnRate = 0.028;
+      blockSpeed = 3.6;
+    } else {
+      difficultyLevel = 0;
+      title.textContent = "TURBULENCE...";
+      spawnRate = 0.012;
+      blockSpeed = 2;
     }
 
     update(deltaTime);
     draw();
+
+    if (hitFlash > 0) hitFlash--;
 
     scoreDisplay.textContent = "SCORE: " + score;
     scoreDisplay.style.display = running ? "block" : "none";
@@ -240,15 +248,16 @@
 
   function startGame() {
     player.x = Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2);
-    player.y = CANVAS_HEIGHT - PLAYER_SIZE - 18;
+    player.y = CANVAS_HEIGHT - PLAYER_SIZE - 14;
     blocks = [];
     elapsedTime = 0;
     difficultyLevel = 0;
     spawnRate = 0.012;
-    blockSpeed = 3;
+    blockSpeed = 2;
     score = 0;
     impossibleStarted = false;
-    title.textContent = "🌊 TURBULENCE...";
+    hitFlash = 0;
+    title.textContent = "TURBULENCE...";
     instructions.style.display = "block";
     startButton.style.display = "none";
     scoreDisplay.style.display = "block";
@@ -259,7 +268,7 @@
 
   function endGame() {
     running = false;
-    title.innerHTML = "☁️ You got hit...<br>But you made it through.";
+    title.innerHTML = "You got hit...<br>But you made it through.";
     instructions.style.display = "none";
     startButton.style.display = "none";
     scoreDisplay.style.display = "block";
