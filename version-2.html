@@ -16,13 +16,13 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 12px;
+    padding: 8px;
     user-select: none;
     overflow: hidden;
   }
   #title {
-    font-size: 20px;
-    margin-bottom: 18px;
+    font-size: 14px;
+    margin-bottom: 10px;
     text-align: center;
     letter-spacing: 1px;
     color: #fff;
@@ -37,42 +37,42 @@
     border: 2px solid #fff;
     background: #111;
     image-rendering: pixelated;
-    width: 440px;
-    height: 600px;
-    max-width: 99vw;
-    max-height: 85vh;
+    width: 230px;
+    height: 320px;
+    max-width: 97vw;
+    max-height: 60vh;
     display: block;
     box-shadow: 0 0 8px #fff3, 0 0 20px #000a;
-    border-radius: 16px;
-    margin-bottom: 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
     margin-top: 1px;
   }
   #instructions {
-    font-size: 13px;
-    margin-top: 7px;
-    margin-bottom: 12px;
+    font-size: 8px;
+    margin-top: 4px;
+    margin-bottom: 8px;
     text-align: center;
     color: #ccc;
     background: rgba(15,15,25,0.5);
-    border-radius: 7px;
-    padding: 7px 13px 7px 13px;
-    border: 1.5px solid #fff1;
+    border-radius: 6px;
+    padding: 4px 7px;
+    border: 1px solid #fff1;
     display: inline-block;
-    box-shadow: 0 0 4px #fff2;
+    box-shadow: 0 0 2px #fff2;
     letter-spacing: 0.01em;
   }
   #startButton {
     font-family: 'Press Start 2P', monospace;
-    font-size: 13px;
+    font-size: 9px;
     background: #111;
     color: #fff;
     border: 2px solid #fff;
-    border-radius: 8px;
-    padding: 12px 28px;
+    border-radius: 7px;
+    padding: 7px 16px;
     cursor: pointer;
     letter-spacing: 0.04em;
     user-select: none;
-    margin-top: 9px;
+    margin-top: 5px;
     margin-bottom: 2px;
     box-shadow: 0 2px 0 0 #333, 0 0 6px #fff2 inset;
     transition: background 0.15s, color 0.12s, border-color 0.12s, transform 0.07s;
@@ -85,9 +85,9 @@
     box-shadow: 0 0 10px #fff5, 0 3px 0 0 #222;
   }
   .scoreDisplay {
-    font-size: 13px;
+    font-size: 9px;
     color: #fff;
-    margin-bottom: 6px;
+    margin-bottom: 3px;
     text-align: center;
     letter-spacing: 0.04em;
     text-shadow: 0 1px 0 #222, 0 0 4px #fff2;
@@ -96,10 +96,10 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 440px;
-    height: 600px;
-    max-width: 99vw;
-    max-height: 85vh;
+    width: 230px;
+    height: 320px;
+    max-width: 97vw;
+    max-height: 60vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -108,41 +108,41 @@
     z-index: 5;
   }
   #endMainMsg, #endSubMsg {
-    font-size: 13px;
+    font-size: 8px;
     color: #fff;
     font-family: 'Press Start 2P', monospace;
     text-align: center;
     letter-spacing: 0.04em;
     text-shadow: 0 1px 3px #101014, 0 0 8px #fff2;
     background: rgba(0,0,0,0.67);
-    padding: 12px 10px 8px 10px;
-    border-radius: 12px;
+    padding: 6px 4px 5px 4px;
+    border-radius: 8px;
     margin: 0;
     width: 90%;
-    max-width: 385px;
-    margin-bottom: 8px;
+    max-width: 210px;
+    margin-bottom: 5px;
     min-height: 1.2em;
     box-sizing: border-box;
     display: inline-block;
   }
   #endSubMsg {
-    font-size: 13px;
+    font-size: 8px;
     margin-top: 0;
     margin-bottom: 0;
     color: #fff;
-    padding: 8px 10px 10px 10px;
+    padding: 4px 4px 6px 4px;
     background: rgba(0,0,0,0.49);
     display: none;
   }
   #endMessageContainer {
     display: none;
   }
-  @media (max-width: 700px) {
-    #title { font-size: 13px; }
-    #instructions { font-size: 10px; padding: 5px 5px; }
-    #startButton { font-size: 10px; padding: 7px 10px; }
-    canvas, #endMessageContainer { width: 99vw; height: 60vw; min-height: 180px; min-width: 120px; }
-    #endMainMsg, #endSubMsg { font-size: 13px; max-width: 99vw; }
+  @media (max-width: 500px) {
+    #title { font-size: 11px; }
+    #instructions { font-size: 7px; padding: 3px 3px; }
+    #startButton { font-size: 7.5px; padding: 4px 7px; }
+    canvas, #endMessageContainer { width: 97vw; height: 55vw; min-height: 100px; min-width: 70px; }
+    #endMainMsg, #endSubMsg { font-size: 7px; max-width: 99vw; }
   }
 </style>
 </head>
@@ -150,7 +150,7 @@
   <div id="title">TURBULENCE...</div>
   <div class="scoreDisplay" id="scoreDisplay" style="display:none;"></div>
   <div id="gameContainer">
-    <canvas id="gameCanvas" width="440" height="600"></canvas>
+    <canvas id="gameCanvas" width="230" height="320"></canvas>
     <div id="endMessageContainer">
       <div id="endMainMsg"></div>
       <div id="endSubMsg"></div>
@@ -172,14 +172,14 @@
 
   const CANVAS_WIDTH = canvas.width;
   const CANVAS_HEIGHT = canvas.height;
-  const PLAYER_SIZE = 32;
-  const BLOCK_SIZE = 32;
+  const PLAYER_SIZE = 14;
+  const BLOCK_SIZE = 14;
   const PLAYER_COLOR = "#fff";
   const BLOCK_COLOR = "#fff";
   const SHADOW_COLOR = "#fff7";
   const HIT_COLOR = "#fff";
 
-  let player = { x: Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2), y: CANVAS_HEIGHT - PLAYER_SIZE - 20, w: PLAYER_SIZE, h: PLAYER_SIZE };
+  let player = { x: Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2), y: CANVAS_HEIGHT - PLAYER_SIZE - 10, w: PLAYER_SIZE, h: PLAYER_SIZE };
   let blocks = [];
   let keys = {};
   let running = false;
@@ -195,7 +195,7 @@
   function drawPixelRect(x, y, w, h, color) {
     ctx.save();
     ctx.shadowColor = SHADOW_COLOR;
-    ctx.shadowBlur = 5;
+    ctx.shadowBlur = 2;
     ctx.fillStyle = color;
     ctx.fillRect(x, y, w, h);
     ctx.restore();
@@ -213,8 +213,8 @@
 
   function update(deltaTime) {
     // Player movement
-    if (keys["ArrowLeft"] && player.x > 0) player.x -= 7;
-    if (keys["ArrowRight"] && player.x + player.w < CANVAS_WIDTH) player.x += 7;
+    if (keys["ArrowLeft"] && player.x > 0) player.x -= 5;
+    if (keys["ArrowRight"] && player.x + player.w < CANVAS_WIDTH) player.x += 5;
 
     // Clamp player inside canvas
     player.x = Math.max(0, Math.min(player.x, CANVAS_WIDTH - player.w));
@@ -271,31 +271,31 @@
     score = Math.floor(elapsedTime / 100);
 
     // Extended, smoother progressive difficulty for a much longer game
-    if (elapsedTime > 42000) {
+    if (elapsedTime > 24000) {
       difficultyLevel = 4;
       title.textContent = "IMPOSSIBLE TURBULENCE...";
       spawnRate = 0;
-      blockSpeed = 10;
-    } else if (elapsedTime > 34000) {
+      blockSpeed = 7;
+    } else if (elapsedTime > 17000) {
       difficultyLevel = 3;
       title.textContent = "Turbulence is wild!";
-      spawnRate = 0.10;
-      blockSpeed = 7.2;
-    } else if (elapsedTime > 25000) {
+      spawnRate = 0.13;
+      blockSpeed = 5.5;
+    } else if (elapsedTime > 11000) {
       difficultyLevel = 2;
       title.textContent = "Turbulence intensifies...";
-      spawnRate = 0.07;
-      blockSpeed = 5.5;
-    } else if (elapsedTime > 14000) {
+      spawnRate = 0.075;
+      blockSpeed = 4;
+    } else if (elapsedTime > 5000) {
       difficultyLevel = 1;
       title.textContent = "Turbulence rising...";
-      spawnRate = 0.035;
-      blockSpeed = 3.9;
+      spawnRate = 0.025;
+      blockSpeed = 2.7;
     } else {
       difficultyLevel = 0;
       title.textContent = "TURBULENCE...";
-      spawnRate = 0.012;
-      blockSpeed = 2.2;
+      spawnRate = 0.011;
+      blockSpeed = 2;
     }
 
     update(deltaTime);
@@ -328,12 +328,12 @@
 
   function startGame() {
     player.x = Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2);
-    player.y = CANVAS_HEIGHT - PLAYER_SIZE - 20;
+    player.y = CANVAS_HEIGHT - PLAYER_SIZE - 10;
     blocks = [];
     elapsedTime = 0;
     difficultyLevel = 0;
-    spawnRate = 0.012;
-    blockSpeed = 2.2;
+    spawnRate = 0.011;
+    blockSpeed = 2;
     score = 0;
     impossibleStarted = false;
     hitFlash = 0;
@@ -361,7 +361,6 @@
     endMainMsg.textContent = "";
     endSubMsg.textContent = "";
     endSubMsg.style.display = "none";
-    // Type first message, then show and type the second
     typeText(endMainMsg, "You got hit...", 60, function() {
       setTimeout(() => {
         endSubMsg.style.display = "inline-block";
