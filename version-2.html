@@ -29,12 +29,9 @@
     text-shadow: 0 2px 8px #fff3, 0 1px 0 #222, 0 0 8px #fff1;
     transition: color 0.4s;
   }
-  .final-message {
-    font-size: 13px !important;
-    margin-top: 0.5em;
-    color: #fff;
-    letter-spacing: 0.03em;
-    text-shadow: 0 1px 2px #111;
+  #gameContainer {
+    position: relative;
+    display: inline-block;
   }
   canvas {
     border: 2px solid #fff;
@@ -95,21 +92,71 @@
     letter-spacing: 0.04em;
     text-shadow: 0 1px 0 #222, 0 0 4px #fff2;
   }
+  #endMessageContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 440px;
+    height: 600px;
+    max-width: 99vw;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 5;
+  }
+  #endMainMsg, #endSubMsg {
+    font-size: 20px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    text-align: center;
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 3px #101014, 0 0 8px #fff2;
+    background: rgba(0,0,0,0.67);
+    padding: 12px 10px 8px 10px;
+    border-radius: 12px;
+    margin: 0;
+    width: 90%;
+    max-width: 385px;
+    margin-bottom: 8px;
+    display: inline-block;
+    min-height: 1.2em;
+    box-sizing: border-box;
+  }
+  #endSubMsg {
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #fff;
+    padding: 8px 10px 10px 10px;
+    background: rgba(0,0,0,0.49);
+  }
+  #endMessageContainer {
+    display: none;
+  }
   @media (max-width: 700px) {
     #title { font-size: 13px; }
     #instructions { font-size: 10px; padding: 5px 5px; }
     #startButton { font-size: 10px; padding: 7px 10px; }
-    canvas { width: 99vw; height: 60vw; min-height: 180px; min-width: 120px; }
+    canvas, #endMessageContainer { width: 99vw; height: 60vw; min-height: 180px; min-width: 120px; }
+    #endMainMsg, #endSubMsg { font-size: 13px; max-width: 99vw; }
   }
 </style>
 </head>
 <body>
   <div id="title">TURBULENCE...</div>
   <div class="scoreDisplay" id="scoreDisplay" style="display:none;"></div>
-  <canvas id="gameCanvas" width="440" height="600"></canvas>
+  <div id="gameContainer">
+    <canvas id="gameCanvas" width="440" height="600"></canvas>
+    <div id="endMessageContainer">
+      <div id="endMainMsg"></div>
+      <div id="endSubMsg"></div>
+    </div>
+  </div>
   <div id="instructions">Use ◀️ and ▶️ arrow keys<br>to dodge falling blocks</div>
   <button id="startButton">START</button>
-  <div id="finalMessage" class="final-message" style="display:none;"></div>
 
 <script>
   const canvas = document.getElementById("gameCanvas");
@@ -118,7 +165,9 @@
   const title = document.getElementById("title");
   const instructions = document.getElementById("instructions");
   const scoreDisplay = document.getElementById("scoreDisplay");
-  const finalMessage = document.getElementById("finalMessage");
+  const endMessageContainer = document.getElementById("endMessageContainer");
+  const endMainMsg = document.getElementById("endMainMsg");
+  const endSubMsg = document.getElementById("endSubMsg");
 
   const CANVAS_WIDTH = canvas.width;
   const CANVAS_HEIGHT = canvas.height;
@@ -140,6 +189,7 @@
   let score = 0;
   let impossibleStarted = false;
   let hitFlash = 0;
+  let gameEnded = false;
 
   function drawPixelRect(x, y, w, h, color) {
     ctx.save();
@@ -260,6 +310,21 @@
     }
   }
 
+  function typeText(element, text, delay, callback) {
+    element.textContent = "";
+    let idx = 0;
+    function type() {
+      if (idx <= text.length) {
+        element.textContent = text.slice(0, idx);
+        idx++;
+        setTimeout(type, delay);
+      } else if (callback) {
+        callback();
+      }
+    }
+    type();
+  }
+
   function startGame() {
     player.x = Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2);
     player.y = CANVAS_HEIGHT - PLAYER_SIZE - 20;
@@ -271,11 +336,14 @@
     score = 0;
     impossibleStarted = false;
     hitFlash = 0;
+    gameEnded = false;
     title.textContent = "TURBULENCE...";
     instructions.style.display = "block";
     startButton.style.display = "none";
     scoreDisplay.style.display = "block";
-    finalMessage.style.display = "none";
+    endMessageContainer.style.display = "none";
+    endMainMsg.textContent = "";
+    endSubMsg.textContent = "";
     running = true;
     lastTime = null;
     requestAnimationFrame(gameTick);
@@ -283,12 +351,19 @@
 
   function endGame() {
     running = false;
-    title.innerHTML = "You got hit...";
+    gameEnded = true;
     instructions.style.display = "none";
     startButton.style.display = "none";
     scoreDisplay.style.display = "block";
-    finalMessage.style.display = "block";
-    finalMessage.textContent = "But you made it through.";
+    endMessageContainer.style.display = "flex";
+    endMainMsg.textContent = "";
+    endSubMsg.textContent = "";
+    // Typing effect for both messages
+    typeText(endMainMsg, "You got hit...", 38, function() {
+      setTimeout(() => {
+        typeText(endSubMsg, "But you made it through.", 29);
+      }, 320);
+    });
     setTimeout(() => {
       window.top.location.href = "https://frdffsdx.carrd.co/#turbulencecomplete";
     }, 2000);
