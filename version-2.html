@@ -121,9 +121,9 @@
     width: 90%;
     max-width: 385px;
     margin-bottom: 8px;
-    display: inline-block;
     min-height: 1.2em;
     box-sizing: border-box;
+    display: inline-block;
   }
   #endSubMsg {
     font-size: 13px;
@@ -132,6 +132,7 @@
     color: #fff;
     padding: 8px 10px 10px 10px;
     background: rgba(0,0,0,0.49);
+    display: none;
   }
   #endMessageContainer {
     display: none;
@@ -344,6 +345,7 @@
     endMessageContainer.style.display = "none";
     endMainMsg.textContent = "";
     endSubMsg.textContent = "";
+    endSubMsg.style.display = "none";
     running = true;
     lastTime = null;
     requestAnimationFrame(gameTick);
@@ -358,9 +360,11 @@
     endMessageContainer.style.display = "flex";
     endMainMsg.textContent = "";
     endSubMsg.textContent = "";
-    // Typing effect for both messages
+    endSubMsg.style.display = "none";
+    // Type first message, then show and type the second
     typeText(endMainMsg, "You got hit...", 60, function() {
       setTimeout(() => {
+        endSubMsg.style.display = "inline-block";
         typeText(endSubMsg, "But you made it through...", 60);
       }, 320);
     });
