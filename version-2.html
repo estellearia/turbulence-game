@@ -1,377 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Turbulence - Reaction Game</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-<style>
-  body {
-    margin: 0;
-    background: #101014;
-    color: #fff;
-    font-family: 'Press Start 2P', monospace;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 12px;
-    user-select: none;
-    overflow: hidden;
-  }
-  #title {
-    font-size: 20px;
-    margin-bottom: 18px;
-    text-align: center;
-    letter-spacing: 1px;
-    color: #fff;
-    text-shadow: 0 2px 8px #fff3, 0 1px 0 #222, 0 0 8px #fff1;
-    transition: color 0.4s;
-  }
-  #gameContainer {
-    position: relative;
-    display: inline-block;
-  }
-  canvas {
-    border: 2px solid #fff;
-    background: #111;
-    image-rendering: pixelated;
-    width: 440px;
-    height: 600px;
-    max-width: 99vw;
-    max-height: 85vh;
-    display: block;
-    box-shadow: 0 0 8px #fff3, 0 0 20px #000a;
-    border-radius: 16px;
-    margin-bottom: 10px;
-    margin-top: 1px;
-  }
-  #instructions {
-    font-size: 13px;
-    margin-top: 7px;
-    margin-bottom: 12px;
-    text-align: center;
-    color: #ccc;
-    background: rgba(15,15,25,0.5);
-    border-radius: 7px;
-    padding: 7px 13px 7px 13px;
-    border: 1.5px solid #fff1;
-    display: inline-block;
-    box-shadow: 0 0 4px #fff2;
-    letter-spacing: 0.01em;
-  }
-  #startButton {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 13px;
-    background: #111;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 8px;
-    padding: 12px 28px;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    user-select: none;
-    margin-top: 9px;
-    margin-bottom: 2px;
-    box-shadow: 0 2px 0 0 #333, 0 0 6px #fff2 inset;
-    transition: background 0.15s, color 0.12s, border-color 0.12s, transform 0.07s;
-  }
-  #startButton:hover {
-    background: #fff;
-    color: #111;
-    border-color: #eee;
-    transform: scale(1.03) translateY(-1px);
-    box-shadow: 0 0 10px #fff5, 0 3px 0 0 #222;
-  }
-  .scoreDisplay {
-    font-size: 13px;
-    color: #fff;
-    margin-bottom: 6px;
-    text-align: center;
-    letter-spacing: 0.04em;
-    text-shadow: 0 1px 0 #222, 0 0 4px #fff2;
-  }
-  #endMessageContainer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 440px;
-    height: 600px;
-    max-width: 99vw;
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 5;
-  }
-  #endMainMsg, #endSubMsg {
-    font-size: 20px;
-    color: #fff;
-    font-family: 'Press Start 2P', monospace;
-    text-align: center;
-    letter-spacing: 0.04em;
-    text-shadow: 0 1px 3px #101014, 0 0 8px #fff2;
-    background: rgba(0,0,0,0.67);
-    padding: 12px 10px 8px 10px;
-    border-radius: 12px;
-    margin: 0;
-    width: 90%;
-    max-width: 385px;
-    margin-bottom: 8px;
-    display: inline-block;
-    min-height: 1.2em;
-    box-sizing: border-box;
-  }
-  #endSubMsg {
-    font-size: 20px;
-    margin-top: 0;
-    margin-bottom: 0;
-    color: #fff;
-    padding: 8px 10px 10px 10px;
-    background: rgba(0,0,0,0.49);
-  }
-  #endMessageContainer {
-    display: none;
-  }
-  @media (max-width: 700px) {
-    #title { font-size: 13px; }
-    #instructions { font-size: 10px; padding: 5px 5px; }
-    #startButton { font-size: 10px; padding: 7px 10px; }
-    canvas, #endMessageContainer { width: 99vw; height: 60vw; min-height: 180px; min-width: 120px; }
-    #endMainMsg, #endSubMsg { font-size: 11px; max-width: 99vw; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Turbulence - Pixel Reaction Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+  <style>
+    html, body {
+      padding: 0;
+      margin: 0;
+      background: #101014;
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+      height: 100%;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #gameContainer {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #gameCanvas {
+      background: #111;
+      border: 3px solid #fff;
+      display: block;
+      margin-bottom: 8px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      /* Responsive scaling */
+      width: min(93vw, 440px);
+      height: auto;
+    }
+    #instructions {
+      font-size: 9px;
+      color: #aaf;
+      background: #000a;
+      border-radius: 5px;
+      padding: 4px 10px;
+      border: 1.5px solid #fff3;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #scoreDisplay {
+      font-size: 11px;
+      color: #fff;
+      letter-spacing: 0.04em;
+      text-shadow: 0 1px 0 #222, 0 0 4px #fff2;
+      margin-bottom: 2px;
+    }
+    #startButton {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      background: #111;
+      color: #fff;
+      border: 2px solid #fff;
+      border-radius: 7px;
+      padding: 7px 18px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      margin: 7px 0 2px 0;
+      box-shadow: 0 2px 0 0 #333, 0 0 6px #fff2 inset;
+      transition: background 0.15s, color 0.12s, border-color 0.12s, transform 0.07s;
+      display: block;
+    }
+    #startButton:hover {
+      background: #fff;
+      color: #111;
+      border-color: #eee;
+      transform: scale(1.03) translateY(-1px);
+    }
+    #endMessageContainer {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+    }
+    #endMainMsg, #endSubMsg {
+      font-size: 11px;
+      color: #fff;
+      background: #000d;
+      padding: 8px 10px 4px 10px;
+      border-radius: 8px;
+      margin: 0 0 4px 0;
+      text-align: center;
+      font-family: 'Press Start 2P', monospace;
+      width: 90%;
+      max-width: 315px;
+      letter-spacing: 0.04em;
+      text-shadow: 0 1px 3px #101014, 0 0 8px #fff2;
+      min-height: 1.2em;
+      box-sizing: border-box;
+    }
+    #endSubMsg {
+      font-size: 11px;
+      margin-top: 0;
+      margin-bottom: 0;
+      background: #000b;
+    }
+    @media (max-width: 500px) {
+      #endMainMsg, #endSubMsg { font-size: 10px; max-width: 99vw; }
+      #gameCanvas { width: 99vw; }
+    }
+    #title {
+      font-size: 13px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      color: #fff;
+      text-shadow: 0 2px 8px #fff3, 0 1px 0 #222, 0 0 8px #fff1;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <div id="title">TURBULENCE...</div>
-  <div class="scoreDisplay" id="scoreDisplay" style="display:none;"></div>
   <div id="gameContainer">
-    <canvas id="gameCanvas" width="440" height="600"></canvas>
+    <canvas id="gameCanvas" width="110" height="150"></canvas>
     <div id="endMessageContainer">
       <div id="endMainMsg"></div>
       <div id="endSubMsg"></div>
     </div>
+    <div id="scoreDisplay"></div>
+    <div id="instructions">Use ◀️ and ▶️ to move<br> Dodge the white blocks</div>
+    <button id="startButton">START</button>
   </div>
-  <div id="instructions">Use ◀️ and ▶️ arrow keys<br>to dodge falling blocks</div>
-  <button id="startButton">START</button>
-
 <script>
-  const canvas = document.getElementById("gameCanvas");
-  const ctx = canvas.getContext("2d");
-  const startButton = document.getElementById("startButton");
-  const title = document.getElementById("title");
-  const instructions = document.getElementById("instructions");
-  const scoreDisplay = document.getElementById("scoreDisplay");
-  const endMessageContainer = document.getElementById("endMessageContainer");
-  const endMainMsg = document.getElementById("endMainMsg");
-  const endSubMsg = document.getElementById("endSubMsg");
+const logicalW = 110, logicalH = 150;
+const pxSize = 4; // Each logical pixel will be upscaled x4 (canvas CSS handles scaling)
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const startButton = document.getElementById('startButton');
+const instructions = document.getElementById('instructions');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const endMessageContainer = document.getElementById('endMessageContainer');
+const endMainMsg = document.getElementById('endMainMsg');
+const endSubMsg = document.getElementById('endSubMsg');
+canvas.style.width = 'min(93vw, 440px)';
+canvas.style.height = 'auto';
 
-  const CANVAS_WIDTH = canvas.width;
-  const CANVAS_HEIGHT = canvas.height;
-  const PLAYER_SIZE = 32;
-  const BLOCK_SIZE = 32;
-  const PLAYER_COLOR = "#fff";
-  const BLOCK_COLOR = "#fff";
-  const SHADOW_COLOR = "#fff7";
-  const HIT_COLOR = "#fff";
+let player, blocks, running, elapsedTime, difficultyLevel, blockSpeed, spawnRate, impossibleStarted, hitFlash, gameEnded, score;
 
-  let player = { x: Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2), y: CANVAS_HEIGHT - PLAYER_SIZE - 20, w: PLAYER_SIZE, h: PLAYER_SIZE };
-  let blocks = [];
-  let keys = {};
-  let running = false;
-  let elapsedTime = 0;
-  let difficultyLevel = 0;
-  let blockSpeed = 2;
-  let spawnRate = 0.012;
-  let score = 0;
-  let impossibleStarted = false;
-  let hitFlash = 0;
-  let gameEnded = false;
+function resetGameVars() {
+  player = { x: Math.floor(logicalW / 2), y: logicalH - 10, w: 7, h: 7 };
+  blocks = [];
+  running = false;
+  elapsedTime = 0;
+  difficultyLevel = 0;
+  blockSpeed = 1;
+  spawnRate = 0.015;
+  impossibleStarted = false;
+  hitFlash = 0;
+  gameEnded = false;
+  score = 0;
+}
+resetGameVars();
 
-  function drawPixelRect(x, y, w, h, color) {
-    ctx.save();
-    ctx.shadowColor = SHADOW_COLOR;
-    ctx.shadowBlur = 5;
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, w, h);
-    ctx.restore();
+function draw() {
+  // Fill background
+  ctx.fillStyle = "#111";
+  ctx.fillRect(0, 0, logicalW, logicalH);
+
+  // Draw blocks (pixelated)
+  for (const b of blocks) {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(Math.round(b.x), Math.round(b.y), b.w, b.h);
+    ctx.strokeStyle = "#222";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(Math.round(b.x), Math.round(b.y), b.w, b.h);
   }
+  // Draw player
+  ctx.fillStyle = hitFlash > 0 ? "#ff8" : "#fff";
+  ctx.fillRect(Math.round(player.x), Math.round(player.y), player.w, player.h);
+  ctx.strokeStyle = "#222";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(Math.round(player.x), Math.round(player.y), player.w, player.h);
+}
 
-  function draw() {
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+let keys = {};
+window.addEventListener("keydown", e => keys[e.key] = true);
+window.addEventListener("keyup", e => keys[e.key] = false);
 
-    // Draw player
-    drawPixelRect(player.x, player.y, player.w, player.h, hitFlash > 0 ? HIT_COLOR : PLAYER_COLOR);
+function update() {
+  // Move player in full pixel steps for pixel feel
+  if (keys["ArrowLeft"] && player.x > 0) player.x -= 3;
+  if (keys["ArrowRight"] && player.x + player.w < logicalW) player.x += 3;
+  player.x = Math.max(0, Math.min(player.x, logicalW - player.w));
 
-    // Draw blocks
-    blocks.forEach(b => drawPixelRect(b.x, b.y, b.w, b.h, BLOCK_COLOR));
+  // Move blocks
+  blocks.forEach(b => b.y += blockSpeed);
+
+  // Collision
+  if (blocks.some(b =>
+    b.y + b.h > player.y &&
+    b.x < player.x + player.w &&
+    b.x + b.w > player.x &&
+    b.y < player.y + player.h
+  )) {
+    hitFlash = 6;
+    endGame();
+    return;
   }
+  blocks = blocks.filter(b => b.y < logicalH);
 
-  function update(deltaTime) {
-    // Player movement
-    if (keys["ArrowLeft"] && player.x > 0) player.x -= 7;
-    if (keys["ArrowRight"] && player.x + player.w < CANVAS_WIDTH) player.x += 7;
-
-    // Clamp player inside canvas
-    player.x = Math.max(0, Math.min(player.x, CANVAS_WIDTH - player.w));
-
-    // Move blocks
-    blocks.forEach(b => b.y += blockSpeed);
-
-    // Collision detection
-    if (blocks.some(b =>
-      b.y + b.h > player.y &&
-      b.x < player.x + player.w &&
-      b.x + b.w > player.x &&
-      b.y < player.y + player.h
-    )) {
-      hitFlash = 6;
-      endGame();
-      return;
+  // Spawn blocks
+  if (difficultyLevel < 4) {
+    if (Math.random() < spawnRate) {
+      let bx = Math.floor(Math.random() * (logicalW - 7));
+      blocks.push({ x: bx, y: -7, w: 7, h: 7 });
     }
-
-    // Remove offscreen blocks
-    blocks = blocks.filter(b => b.y < CANVAS_HEIGHT);
-
-    // Spawn blocks according to difficulty
-    if (difficultyLevel < 4) {
-      if (Math.random() < spawnRate) {
-        blocks.push({
-          x: Math.floor(Math.random() * (CANVAS_WIDTH - BLOCK_SIZE)),
-          y: -BLOCK_SIZE,
-          w: BLOCK_SIZE,
-          h: BLOCK_SIZE
-        });
-      }
-    } else {
-      // Impossible: fill the whole screen with a wall the player can't dodge
-      if (!impossibleStarted) {
-        impossibleStarted = true;
-        // Spawn a first wall immediately
-        blocks.push({ x: 0, y: -BLOCK_SIZE, w: CANVAS_WIDTH, h: BLOCK_SIZE });
-      }
-      // Drop a new wall every ~0.45 seconds, fast enough that the player cannot escape
-      if (blocks.length === 0 || blocks[blocks.length - 1].y > BLOCK_SIZE * 0.75) {
-        blocks.push({ x: 0, y: -BLOCK_SIZE, w: CANVAS_WIDTH, h: BLOCK_SIZE });
-      }
+  } else {
+    // Impossible: solid wall
+    if (!impossibleStarted) {
+      impossibleStarted = true;
+      blocks.push({ x: 0, y: -7, w: logicalW, h: 7 });
+    }
+    if (blocks.length === 0 || blocks[blocks.length - 1].y > 7 * 0.75) {
+      blocks.push({ x: 0, y: -7, w: logicalW, h: 7 });
     }
   }
+}
 
-  let lastTime = null;
-  function gameTick(timestamp) {
-    if (!lastTime) lastTime = timestamp;
-    const deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
+let lastTime = null;
+function gameTick(timestamp) {
+  if (!lastTime) lastTime = timestamp;
+  const deltaTime = timestamp - lastTime;
+  lastTime = timestamp;
 
-    elapsedTime += deltaTime;
-    score = Math.floor(elapsedTime / 100);
+  elapsedTime += deltaTime;
+  score = Math.floor(elapsedTime / 100);
 
-    // Extended, smoother progressive difficulty for a much longer game
-    if (elapsedTime > 42000) {
-      difficultyLevel = 4;
-      title.textContent = "IMPOSSIBLE TURBULENCE...";
-      spawnRate = 0;
-      blockSpeed = 10;
-    } else if (elapsedTime > 34000) {
-      difficultyLevel = 3;
-      title.textContent = "Turbulence is wild!";
-      spawnRate = 0.10;
-      blockSpeed = 7.2;
-    } else if (elapsedTime > 25000) {
-      difficultyLevel = 2;
-      title.textContent = "Turbulence intensifies...";
-      spawnRate = 0.07;
-      blockSpeed = 5.5;
-    } else if (elapsedTime > 14000) {
-      difficultyLevel = 1;
-      title.textContent = "Turbulence rising...";
-      spawnRate = 0.035;
-      blockSpeed = 3.9;
-    } else {
-      difficultyLevel = 0;
-      title.textContent = "TURBULENCE...";
-      spawnRate = 0.012;
-      blockSpeed = 2.2;
-    }
-
-    update(deltaTime);
-    draw();
-
-    if (hitFlash > 0) hitFlash--;
-
-    scoreDisplay.textContent = "SCORE: " + score;
-    scoreDisplay.style.display = running ? "block" : "none";
-
-    if (running) {
-      requestAnimationFrame(gameTick);
-    }
+  // Difficulty
+  if (elapsedTime > 42000) {
+    difficultyLevel = 4; spawnRate = 0; blockSpeed = 3.5;
+  } else if (elapsedTime > 34000) {
+    difficultyLevel = 3; spawnRate = 0.10; blockSpeed = 2.7;
+  } else if (elapsedTime > 25000) {
+    difficultyLevel = 2; spawnRate = 0.06; blockSpeed = 2.1;
+  } else if (elapsedTime > 14000) {
+    difficultyLevel = 1; spawnRate = 0.025; blockSpeed = 1.5;
+  } else {
+    difficultyLevel = 0; spawnRate = 0.015; blockSpeed = 1;
   }
 
-  function typeText(element, text, delay, callback) {
-    element.textContent = "";
-    let idx = 0;
-    function type() {
-      if (idx <= text.length) {
-        element.textContent = text.slice(0, idx);
-        idx++;
-        setTimeout(type, delay);
-      } else if (callback) {
-        callback();
-      }
+  update();
+  draw();
+  if (hitFlash > 0) hitFlash--;
+
+  scoreDisplay.textContent = "SCORE: " + score;
+  scoreDisplay.style.display = running ? "block" : "none";
+
+  if (running) requestAnimationFrame(gameTick);
+}
+
+// Typing effect
+function typeText(element, text, delay, callback) {
+  element.textContent = "";
+  let idx = 0;
+  function type() {
+    if (idx <= text.length) {
+      element.textContent = text.slice(0, idx);
+      idx++;
+      setTimeout(type, delay);
+    } else if (callback) {
+      callback();
     }
-    type();
   }
+  type();
+}
 
-  function startGame() {
-    player.x = Math.floor(CANVAS_WIDTH / 2 - PLAYER_SIZE / 2);
-    player.y = CANVAS_HEIGHT - PLAYER_SIZE - 20;
-    blocks = [];
-    elapsedTime = 0;
-    difficultyLevel = 0;
-    spawnRate = 0.012;
-    blockSpeed = 2.2;
-    score = 0;
-    impossibleStarted = false;
-    hitFlash = 0;
-    gameEnded = false;
-    title.textContent = "TURBULENCE...";
-    instructions.style.display = "block";
-    startButton.style.display = "none";
-    scoreDisplay.style.display = "block";
-    endMessageContainer.style.display = "none";
-    endMainMsg.textContent = "";
-    endSubMsg.textContent = "";
-    running = true;
-    lastTime = null;
-    requestAnimationFrame(gameTick);
-  }
+function startGame() {
+  resetGameVars();
+  instructions.style.display = "block";
+  startButton.style.display = "none";
+  scoreDisplay.style.display = "block";
+  endMessageContainer.style.display = "none";
+  endMainMsg.textContent = "";
+  endSubMsg.textContent = "";
+  running = true;
+  lastTime = null;
+  requestAnimationFrame(gameTick);
+}
 
-  function endGame() {
-    running = false;
-    gameEnded = true;
-    instructions.style.display = "none";
-    startButton.style.display = "none";
-    scoreDisplay.style.display = "block";
-    endMessageContainer.style.display = "flex";
-    endMainMsg.textContent = "";
-    endSubMsg.textContent = "";
-    // Typing effect for both messages
-    typeText(endMainMsg, "You got hit...", 60, function() {
-      setTimeout(() => {
-        typeText(endSubMsg, "But you made it through.", 60);
-      }, 320);
-    });
+function endGame() {
+  running = false;
+  gameEnded = true;
+  instructions.style.display = "none";
+  startButton.style.display = "none";
+  scoreDisplay.style.display = "block";
+  endMessageContainer.style.display = "flex";
+  endMainMsg.textContent = "";
+  endSubMsg.textContent = "";
+  // Typing effect for both messages at 60ms per char
+  typeText(endMainMsg, "You got hit...", 60, function() {
     setTimeout(() => {
-      window.top.location.href = "https://frdffsdx.carrd.co/#turbulencecomplete";
-    }, 2000);
-  }
+      typeText(endSubMsg, "But you made it through.", 60);
+    }, 320);
+  });
+  setTimeout(() => {
+    window.top.location.href = "https://frdffsdx.carrd.co/#turbulencecomplete";
+  }, 2000);
+}
 
-  window.addEventListener("keydown", e => keys[e.key] = true);
-  window.addEventListener("keyup", e => keys[e.key] = false);
-  startButton.onclick = startGame;
+startButton.onclick = startGame;
+
+// Initial pixel-perfect scaling
+function scaleCanvas() {
+  const maxDisplay = Math.min(window.innerWidth * 0.93, 440);
+  canvas.style.width = maxDisplay + "px";
+  canvas.style.height = (maxDisplay * logicalH / logicalW) + "px";
+}
+window.addEventListener('resize', scaleCanvas);
+scaleCanvas();
+
+// Set logical size for pixel-perfect drawing
+canvas.width = logicalW;
+canvas.height = logicalH;
+draw();
 </script>
 </body>
 </html>
